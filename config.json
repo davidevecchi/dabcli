@@ -7,7 +7,7 @@
     "test_mode": false,
     "delete_raw_files": true,
     "keep_cover_file": false,
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ODE1LCJpYXQiOjE3NTIyMjUwMTUsImV4cCI6MTc1MjgyOTgxNX0.aSidxZJKEdPklMiz3P0KU4-KOmTM9vgqmJxoTM_wx8Y",
-    "email": "yamantaksharma@gmail.com",
-    "password": "6BMloQi3&u"
+    "token": "",
+    "email": "",
+    "password": ""
 }
