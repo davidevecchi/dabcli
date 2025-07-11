@@ -167,3 +167,11 @@ DABMusic is a community-driven open-source platform that provides unrestricted, 
 
 - **Developer**: [sherlockholmesat221b](https://github.com/sherlockholmesat221b)
 - superadmin0 : Creator, DABMusic
+
+---
+
+## Disclaimer
+This software is provided **for educational and archival purposes only**.
+It does **not host or distribute any music files**, nor does it circumvent any DRM or protected media systems.
+By using this software, you agree that **you are solely responsible** for complying with all applicable local, national, and international laws.
+The developers assume no liability for any misuse or violation of copyright laws.
