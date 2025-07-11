@@ -22,7 +22,7 @@ It supports searching, downloading, metadata tagging, playlist creation, and loc
 ### 1. Clone the Repository
 
 ```bash
-git clone [https://github.com/yourusername/dabcli.git](https://github.com/sherlockholmesat221b/dabcli)
+git clone https://github.com/sherlockholmesat221b/dabcli.git
 cd dabcli
 ```
 
