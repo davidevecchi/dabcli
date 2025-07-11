@@ -64,6 +64,8 @@ Search for tracks or albums:
 
 ```bash
 python3 dabcli.py search "Mozart"
+```
+```bash
 python3 dabcli.py search "Mozart" --type album
 ```
 
