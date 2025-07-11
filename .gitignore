@@ -1,0 +1,16 @@
+# Bytecode
+__pycache__/
+*.pyc
+
+# Download output
+downloads/
+*.raw
+*.m3u
+*.m3u8
+cover.jpg
+
+# Logs
+*.log
+
+# Temporary
+*.tmp
