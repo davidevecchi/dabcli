@@ -1,7 +1,6 @@
-# api.py
-
 import requests
 from config import config
+from utils import require_login
 
 BASE_URL = "https://dab.yeet.su/api"
 
@@ -29,7 +28,6 @@ def login(email: str, password: str):
         print("Login failed. Check email/password.")
         print(resp.text)
 
-# --- Unified response handler ---
 def _safe_json(resp, endpoint):
     try:
         return resp.json()
@@ -39,12 +37,21 @@ def _safe_json(resp, endpoint):
             print(f"Raw response:\n{resp.text[:300]}...\n")
         return None
 
-# --- Request core ---
 def _request(method: str, endpoint: str, **kwargs):
+    if not require_login(config, silent=False):
+        return None
+
     headers = config.get_auth_header()
+    headers["User-Agent"] = (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/1337.0.0.0 Safari/537.36"
+    )
+
     url = BASE_URL + endpoint
     if config.debug:
-        print(f"[DEBUG] {method} {url} | {kwargs}")
+        print(f"[DEBUG] {method} {url} | {kwargs} | HEADERS: {headers}")
+
     try:
         resp = requests.request(method, url, headers=headers, **kwargs)
         resp.raise_for_status()
@@ -53,7 +60,6 @@ def _request(method: str, endpoint: str, **kwargs):
         print(f"{method} error on {endpoint}: {e}")
         return None
 
-# --- API method wrappers ---
 def get(endpoint: str, params=None):
     return _request("GET", endpoint, params=params)
 

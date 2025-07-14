@@ -1,15 +1,13 @@
-# streamer.py (refactored)
-
 import subprocess
 import time
 from api import get
 from config import config
+from utils import require_login
 
-# === Core: Get stream URL from DAB API ===
 def get_stream_url(track_id: str, quality: str = None) -> str:
-    if not config.token or not config.email or not config.password:
-        print("Streaming requires authentication. Please login using: dabcli.py login <email> <password>")
-        return
+    if not require_login(config):
+        return None
+
     quality = quality or config.stream_quality
     result = get("/stream", params={"trackId": track_id, "quality": quality})
     if not result:
@@ -17,7 +15,6 @@ def get_stream_url(track_id: str, quality: str = None) -> str:
         return None
     return result.get("url")
 
-# === Terminal metadata block ===
 def _print_metadata(track):
     if not track:
         return
@@ -28,13 +25,10 @@ def _print_metadata(track):
     print(f"   Year  : {track.get('releaseDate', '')[:4]}")
     print(f"   Genre : {track.get('genre', '—')}\n")
 
-# === Launch mpv (no visualizer) ===
 def _launch_mpv(stream_url: str, title: str = None):
     cmd = ["mpv", "--no-video", "--force-window=no", "--audio-display=no"]
-
     if title:
         cmd.append(f"--term-playing-msg=Now Playing: {title}")
-
     cmd.append(stream_url)
 
     try:
@@ -44,39 +38,49 @@ def _launch_mpv(stream_url: str, title: str = None):
     except Exception as e:
         print(f"Playback error: {e}")
 
-# === Single-track playback ===
 def play_single(track_id: str, quality: str = None):
+    if not require_login(config):
+        return
+
     stream_url = get_stream_url(track_id, quality)
     if not stream_url:
         return
     print("Now Playing: Track ID", track_id)
     _launch_mpv(stream_url, title=f"Track ID {track_id}")
 
-# === Album or playlist playback ===
 def play_queue(track_ids: list, quality: str = None):
+    if not require_login(config):
+        return
+
     for idx, track_id in enumerate(track_ids):
         print(f"\nTrack {idx + 1} of {len(track_ids)} — ID: {track_id}")
         play_single(track_id, quality=quality)
         time.sleep(1)
 
-# === Playlist (library) support ===
 def get_library_tracks(library_id: str):
+    if not require_login(config):
+        return []
+
     result = get(f"/libraries/{library_id}")
     if not result or "library" not in result:
         print("Could not load library.")
         return []
     return result["library"].get("tracks", [])
 
-# === Album support ===
 def get_album_track_ids(album_id: str):
+    if not require_login(config):
+        return []
+
     result = get("/album", params={"albumId": album_id})
     if not result:
         return []
     album = result.get("album", result)
     return [t["id"] for t in album.get("tracks", [])]
 
-# === Play queue with full track metadata ===
 def play_queue_with_metadata(tracks: list, quality: str = None):
+    if not require_login(config):
+        return
+
     for idx, track in enumerate(tracks):
         print(f"\nTrack {idx + 1} of {len(tracks)} — ID: {track['id']}")
         stream_url = get_stream_url(track["id"], quality)
@@ -86,7 +90,6 @@ def play_queue_with_metadata(tracks: list, quality: str = None):
         _launch_mpv(stream_url, title=track.get("title", None))
         time.sleep(1)
 
-# === CLI entrypoint ===
 def stream_cli_entry(args):
     if getattr(args, "track_id", None):
         play_single(args.track_id, quality=args.quality)

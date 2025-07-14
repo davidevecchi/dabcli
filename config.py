@@ -104,6 +104,15 @@ class Config:
             self._retry_login()
         return {"Cookie": f"session={self.token}"}
 
+    def is_logged_in(self):
+        return bool(self.token)
+
+    def logout(self):
+        self.token = ""
+        self.email = ""
+        self.password = ""
+        self._save_token("")
+        print("You have been logged out.")
 
 def clear_credentials():
     try:
@@ -121,6 +130,5 @@ def clear_credentials():
             json.dump(data, f, indent=4)
     except Exception as e:
         print(f"Failed to clear credentials: {e}")
-
 
 config = Config()

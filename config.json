@@ -1,13 +1,10 @@
 {
-    "output_format": "mp3",
+    "output_format": "flac",
     "output_directory": "./downloads",
     "use_metadata_tagging": true,
     "stream_quality": "27",
     "stream_player": "mpv",
     "test_mode": false,
     "delete_raw_files": true,
-    "keep_cover_file": false,
-    "token": "",
-    "email": "",
-    "password": ""
+    "keep_cover_file": false
 }

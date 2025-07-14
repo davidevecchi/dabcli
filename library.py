@@ -1,6 +1,7 @@
 import os
 from api import get
 from config import config
+from utils import require_login
 from downloader import download_track
 from converter import convert_audio
 from tagger import tag_audio
@@ -10,6 +11,9 @@ def sanitize_filename(name):
     return ''.join(c for c in name if c.isalnum() or c in ' _-').rstrip()
 
 def download_library(library_id: str, quality: str = None):
+    if not require_login(config):
+        return
+
     result = get(f"/libraries/{library_id}")
     if not result or "library" not in result:
         print("[Library] Failed to load library.")
@@ -57,7 +61,6 @@ def download_library(library_id: str, quality: str = None):
             "date": track.get("releaseDate", "")[:4]
         }
 
-        # Download and embed cover for this track
         cover_url = track.get("albumCover")
         cover_path = None
         if cover_url:
@@ -67,7 +70,6 @@ def download_library(library_id: str, quality: str = None):
 
         tag_audio(converted_path, metadata, cover_path=cover_path)
 
-        # Delete cover if not keeping
         if cover_path and os.path.exists(cover_path) and not config.keep_cover_file:
             try:
                 os.remove(cover_path)
@@ -82,7 +84,6 @@ def download_library(library_id: str, quality: str = None):
 
         playlist_paths.append(os.path.basename(converted_path))
 
-    # Write library.m3u8
     m3u_path = os.path.join(lib_folder, "library.m3u8")
     with open(m3u_path, "w", encoding="utf-8") as m3u:
         for filename in playlist_paths:

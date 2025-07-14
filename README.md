@@ -99,9 +99,14 @@ Stream a track, album, or playlist:
 
 ```bash
 python3 dabcli.py play --track-id <id>
+```
+```bash
 python3 dabcli.py play --album-id <id>
+```
+```bash
 python3 dabcli.py play --library-id <id>
 ```
+
 
 ---
 
@@ -166,7 +171,7 @@ DABMusic is a community-driven open-source platform that provides unrestricted, 
 ## 👥 Credits
 
 - **Developer**: [sherlockholmesat221b](https://github.com/sherlockholmesat221b)
-- superadmin0 : Creator, DABMusic
+- superadmin0 : his majesty, Creator, DABMusic
 
 ---
 

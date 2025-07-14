@@ -11,6 +11,7 @@ from album import download_album, find_album_by_title
 from config import config, clear_credentials
 from streamer import stream_cli_entry
 from cover import download_cover_image
+from utils import require_login
 
 ASCII_ART = r"""
   _____          ____  __  __           _         _____ _      _____   
@@ -22,8 +23,8 @@ ASCII_ART = r"""
 """
 
 CREDITS = """
-Developed By: sherlockholmesat221b
-Special Thanks To: superadmin0 (Creator of DABMusic)
+Developed By: sherlockholmesat221b (sherlockholmesat221b@proton.me)
+Special Thanks To: His Majesty superadmin0 (Creator of DABMusic)
 Happy Birthday sherlockholmes221b (06 July)
 """
 
@@ -69,28 +70,22 @@ def main():
 
     subparsers = parser.add_subparsers(dest="command")
 
-    # Global options
     parser.add_argument("--version", action="store_true", help="Show current version")
 
-    # Status & Logout
     subparsers.add_parser("status", help="Check login/authentication status")
     subparsers.add_parser("logout", help="Clear token and credentials")
 
-    # Login
     login_parser = subparsers.add_parser("login", help="Login with your DAB account")
     login_parser.add_argument("email", help="Your DAB email")
     login_parser.add_argument("password", help="Your DAB password")
 
-    # Search
     search_parser = subparsers.add_parser("search", help="Search tracks, albums, and artists")
     search_parser.add_argument("query", help="Search query string")
     search_parser.add_argument("--type", choices=["track", "album", "artist"], default=None, help="Filter results")
 
-    # Discography
     discog_parser = subparsers.add_parser("discography", help="Get artist discography")
     discog_parser.add_argument("--artist-id", required=True, help="Artist ID to fetch albums")
 
-    # Download
     dl_parser = subparsers.add_parser("download", help="Download and convert a track")
     dl_parser.add_argument("--track-id", required=True)
     dl_parser.add_argument("--format", choices=["mp3", "flac", "wav"])
@@ -101,11 +96,9 @@ def main():
     dl_parser.add_argument("--date", help="Release year")
     dl_parser.add_argument("--path", help="Custom download directory")
 
-    # Album
     album_parser = subparsers.add_parser("album", help="Download an album by ID or title")
     album_parser.add_argument("album_id_or_title")
 
-    # Play/Stream
     play_parser = subparsers.add_parser("play", help="Stream one or more tracks")
     play_parser.add_argument("--track-id", help="Track ID to stream")
     play_parser.add_argument("--album-id", help="Album ID to stream entire album")
@@ -114,26 +107,27 @@ def main():
     play_parser.add_argument("--quality", help="Audio quality (27 = FLAC, 5 = MP3)")
     play_parser.add_argument("--mode", choices=["stream", "download"], default="stream", help="Stream or download")
 
-    # Library
     library_parser = subparsers.add_parser("library", help="Download all tracks in a library")
     library_parser.add_argument("library_id", help="Library ID to download")
     library_parser.add_argument("--quality", help="Audio quality (27 = FLAC, 5 = MP3)")
 
     args = parser.parse_args()
 
-    # --version
     if args.version:
-        print("DAB CLI Version: 1.0.0")
-        return
+            try:
+                        from pathlib import Path
+                        version = Path("VERSION").read_text().strip()
+            except Exception:
+                        version = "unknown"
+            print(f"DAB CLI Version: {version}")
+            return
 
-    # Default help
     if not args.command:
         print(ASCII_ART)
         print(CREDITS)
         print(COMMANDS_HELP)
         return
 
-    # Commands
     if args.command == "login":
         login(args.email, args.password)
 
@@ -153,17 +147,24 @@ def main():
         print("You are now logged out.")
 
     elif args.command == "search":
+        if not require_login(config): return
         search_and_print(args.query, args.type)
 
     elif args.command == "discography":
+        if not require_login(config): return
         get_artist_discography(args.artist_id)
 
     elif args.command == "download":
+        if not require_login(config): return
         print("Starting full download pipeline...")
         output_format = args.format or config.output_format
         directory = args.path or config.output_directory
 
         track_meta_raw = get_track_metadata_by_id(args.track_id)
+        if not track_meta_raw:
+            print("Track not found or unavailable.")
+            return
+
         track_meta = {
             "title": args.title or track_meta_raw.get("title", ""),
             "artist": args.artist or track_meta_raw.get("artist", ""),
@@ -201,6 +202,7 @@ def main():
             os.remove(cover_path)
 
     elif args.command == "album":
+        if not require_login(config): return
         album_input = args.album_id_or_title
         print(f"Searching for album titled '{album_input}'...")
         matches = find_album_by_title(album_input)
@@ -230,9 +232,11 @@ def main():
             print("Invalid selection.")
 
     elif args.command == "play":
+        if not require_login(config): return
         stream_cli_entry(args)
 
     elif args.command == "library":
+        if not require_login(config): return
         from library import download_library
         download_library(args.library_id, quality=args.quality)
 
@@ -240,7 +244,6 @@ def main():
         print("Unknown command.\n")
         print(ASCII_ART)
         print(COMMANDS_HELP)
-
 
 if __name__ == "__main__":
     main()

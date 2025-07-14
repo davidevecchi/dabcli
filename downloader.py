@@ -4,6 +4,7 @@ import requests
 from tqdm import tqdm
 from config import config
 from api import get
+from utils import require_login
 
 def _sanitize_filename(name: str) -> str:
     name = unicodedata.normalize("NFKC", name)
@@ -16,13 +17,18 @@ def _format_filename(track: dict, output_format: str, index: int = None) -> str:
     return f"{title}.{output_format}"
 
 def get_stream_url(track_id: str, quality: str = "27"):
+    if not require_login(config):
+        return None
+
     result = get("/stream", params={"trackId": track_id, "quality": quality})
     if not result:
-        print("[Downloader] Could not get stream URL.")
         return None
     return result.get("url")
 
 def download_track(track_id: str, filename: str = None, quality: str = None, directory: str = None, index: int = None, track_meta: dict = None):
+    if not require_login(config):
+        return None
+
     quality = quality or ("27" if config.output_format == "flac" else "5")
     directory = directory or config.output_directory
     os.makedirs(directory, exist_ok=True)
