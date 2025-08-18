@@ -1,19 +1,20 @@
 # 🎧 DABMusic CLI
-**DABMusic CLI** is an advanced, extensible, and user-friendly command-line tool for accessing [DABMusic](https://dab.yeet.su) — a free and open-source digital music library and streaming service.  
-It supports searching, downloading, metadata tagging, playlist creation, and local streaming — all via the terminal.
+
+**DABMusic CLI** is an advanced, extensible, and user-friendly command-line tool for accessing [DABMusic](https://dab.yeet.su) — a free, open-source digital music library and streaming service.  
+It supports searching, downloading, metadata tagging, artist discography downloads, local streaming, and more — all from your terminal.
 
 ---
 
-## 🚀 Features
+## 🚀 What's New in v2.0
 
-- Download full albums, tracks, and library playlists
-- Stream tracks directly via `mpv`
-- Automatic metadata tagging
-- Embedded cover art support
-- Smart filename generation
-- Playlist generation in `.m3u8` format
-- Configurable output format (MP3, FLAC)
-- Login/logout with token management
+- **Smarter Downloader**: Skips existing files; supports pause/resume/stop  
+- **Artist Discography Download**: Fetch all albums by artist name or ID  
+- **Enhanced MPV IPC Player**: Stream tracks, albums, libraries, or queues with live metadata, timers, and playback controls (space=play/pause, arrows=next/prev, q=quit)  
+- **Lyrics & Cover Embedding**: Auto-download covers and lyrics  
+- **Metadata Overrides**: Customize title, artist, album, genre, date, and path during downloads  
+- **Version Checking & Improved CLI Help**: Always know if your CLI is up-to-date  
+
+> v2.0 makes downloads smarter, streaming interactive, and metadata fully customizable.
 
 ---
 
@@ -24,7 +25,7 @@ It supports searching, downloading, metadata tagging, playlist creation, and loc
 ```bash
 git clone https://github.com/sherlockholmesat221b/dabcli.git
 cd dabcli
-```
+````
 
 ### 2. Install Dependencies
 
@@ -42,71 +43,41 @@ python3 dabcli.py
 
 ## 💡 Usage Examples
 
-### 🔐 Log In
+### 🔐 Log In / 🔓 Log Out
 
 ```bash
 python3 dabcli.py login you@example.com yourpassword
-```
-
-### 🔓 Log Out
-
-```bash
 python3 dabcli.py logout
 ```
 
-> Removes token and credentials from config.
-
----
-
 ### 🔍 Search
 
-Search for tracks or albums:
-
 ```bash
-python3 dabcli.py search "Mozart"
+python3 dabcli.py search "Michael Jackson"
+python3 dabcli.py search "Michael Jackson" --type album
+python3 dabcli.py search "Michael Jackson" --type artist
 ```
-```bash
-python3 dabcli.py search "Mozart" --type album
-```
-
----
 
 ### ⬇️ Download
 
-#### Download a Track
-
 ```bash
-python3 dabcli.py download --track-id 123456789 --format mp3
-```
-
-#### Download an Album
-
-```bash
+python3 dabcli.py track <track-id>
 python3 dabcli.py album "Requiem"
-```
-
-#### Download a Library Playlist
-
-```bash
+python3 dabcli.py album buhzzhfz660ma
 python3 dabcli.py library <library_id>
+python3 dabcli.py discography "Michael Jackson"
 ```
 
----
+> Supports metadata overrides for format, title, artist, album, genre, date, and path.
 
 ### ▶️ Stream
 
-Stream a track, album, or playlist:
-
 ```bash
 python3 dabcli.py play --track-id <id>
-```
-```bash
 python3 dabcli.py play --album-id <id>
-```
-```bash
 python3 dabcli.py play --library-id <id>
+python3 dabcli.py play --queue <id1> <id2> <id3>
 ```
-
 
 ---
 
@@ -116,42 +87,31 @@ Customize default behavior in `config.json`:
 
 ```json
 {
-  "output_format": "flac",
-  "output_directory": "./downloads",
-  "use_metadata_tagging": true,
   "stream_quality": "27",
   "stream_player": "mpv",
-  "delete_raw_files": true,
-  "keep_cover_file": false
+  "output_format": "flac",
+  "output_directory": "./Downloads",
+  "keep_cover_file": false,
+  "get_lyrics": true
 }
 ```
 
 ### Config Options
 
-- `output_format`: `"flac"` or `"mp3"`
-- `output_directory`: Directory where files will be saved
-- `stream_quality`: `27 = FLAC`, `5 = MP3`
-- `use_metadata_tagging`: Automatically tag tracks
-- `stream_player`: Player used for streaming (e.g., `mpv`)
-- `delete_raw_files`: Remove original files after conversion
-- `keep_cover_file`: Keep or delete embedded cover images
+- `output_format`: `"flac"` or `"mp3"` — format for downloaded tracks  
+- `output_directory`: Directory where all downloads will be saved  
+- `stream_quality`: `"27"` = FLAC, `"5"` = MP3 — controls quality of streaming/downloads  
+- `stream_player`: Player used for streaming (currently only `mpv` supported)  
+- `get_lyrics`: Download and embed lyrics into tracks if available  
+- `keep_cover_file`: Keep a separate cover image file per track/album, or only embed it in metadata
 
 ---
 
 ## 🧩 Dependencies
 
 - **Python 3.7+**
-- Python packages:
-    - `requests`
-    - `mutagen`
-    - `tqdm`
-    - `tabulate`
-- External tools:
-    - `ffmpeg` (required)
-    - `mpv` (optional, for streaming)
-    - `nano` (optional, for editing config)
-
-### Install with:
+- Python packages: `requests`, `mutagen`, `tqdm`, `tabulate`
+- External tools: `mpv` (optional, for streaming)
 
 ```bash
 pip install -r requirements.txt
@@ -161,7 +121,7 @@ pip install -r requirements.txt
 
 ## 🌐 About DABMusic
 
-DABMusic is a community-driven open-source platform that provides unrestricted, high-quality music streaming and downloads.
+DABMusic is a community-driven open-source platform providing high-quality, unrestricted music streaming and downloads.
 
 - **Website**: [dab.yeet.su](https://dab.yeet.su) | [dabmusic.xyz](https://dabmusic.xyz)
 - **Discord**: [Join the community](https://discord.gg/dabmusic-1347344910008979548)
@@ -170,13 +130,25 @@ DABMusic is a community-driven open-source platform that provides unrestricted, 
 
 ## 👥 Credits
 
-- **Developer**: [sherlockholmesat221b](https://github.com/sherlockholmesat221b)
-- superadmin0 : his majesty, Creator, DABMusic
+- **Developer:** [sherlockholmesat221b](https://github.com/sherlockholmesat221b)
+- **superadmin0 (Creator of DABMusic)**
+- **Contributors and Testers:** [joehacks](https://github.com/holmesisback), [uimaxbai](https://github.com/uimaxbai)
 
 ---
 
 ## ⚠️ Disclaimer
-This software is provided **for educational and archival purposes only**.
-It does **not host or distribute any music files**, nor does it circumvent any DRM or protected media systems.
-By using this software, you agree that **you are solely responsible** for complying with all applicable local, national, and international laws.
-The developers assume no liability for any misuse or violation of copyright laws.
+
+This software is provided **for educational and archival purposes only**.  
+It does **not host or distribute music files**, nor circumvent DRM.  
+Users are **responsible for complying with all applicable laws**.
+
+---
+
+## ⚡ How to Update?
+
+```bash
+git clone https://github.com/sherlockholmesat221b/dabcli.git
+python3 dabcli.py --version
+```
+
+---

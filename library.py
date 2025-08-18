@@ -3,14 +3,13 @@ from api import get
 from config import config
 from utils import require_login
 from downloader import download_track
-from converter import convert_audio
 from tagger import tag_audio
 from cover import download_cover_image
 
 def sanitize_filename(name):
     return ''.join(c for c in name if c.isalnum() or c in ' _-').rstrip()
 
-def download_library(library_id: str, quality: str = None):
+def download_library(library_id: str, quality: str = None, cli_args=None):
     if not require_login(config):
         return
 
@@ -25,7 +24,7 @@ def download_library(library_id: str, quality: str = None):
         print("[Library] No tracks found.")
         return
 
-    title = sanitize_filename(library.get("title", f"library_{library_id}"))
+    title = sanitize_filename(library.get("name", f"library_{library_id}"))
     output_format = config.output_format
     quality = quality or ("27" if output_format == "flac" else "5")
 
@@ -48,34 +47,39 @@ def download_library(library_id: str, quality: str = None):
             print("[Library] Skipping: download failed.")
             continue
 
-        converted_path = convert_audio(raw_path, output_format)
-        if not converted_path:
-            print("[Library] Skipping: conversion failed.")
-            continue
+        converted_path = raw_path  # same format assumption
+        # converted_path = convert_audio(raw_path, output_format)
 
+        # Build metadata with CLI overrides
         metadata = {
-            "title": track.get("title", ""),
-            "artist": track.get("artist", ""),
-            "album": track.get("albumTitle", ""),
-            "genre": track.get("genre", ""),
-            "date": track.get("releaseDate", "")[:4]
+            "title": getattr(cli_args, "title", None) or track.get("title", ""),
+            "artist": getattr(cli_args, "artist", None) or track.get("artist", ""),
+            "album": getattr(cli_args, "album", None) or track.get("albumTitle", ""),
+            "genre": getattr(cli_args, "genre", None) or track.get("genre", ""),
+            "date": getattr(cli_args, "date", None) or track.get("releaseDate", "")[:4]
         }
 
+        # Download a cover file for this track (named via song title)
+        from downloader import _sanitize_filename
         cover_url = track.get("albumCover")
         cover_path = None
         if cover_url:
+            clean_title = _sanitize_filename(track.get("title", "cover"))
             cover_path = download_cover_image(
-                cover_url, os.path.join(lib_folder, f"cover_{track['id']}.jpg")
+                cover_url, os.path.join(lib_folder, f"{clean_title}.jpg")
             )
 
+        # Tag the converted audio
         tag_audio(converted_path, metadata, cover_path=cover_path)
 
+        # Delete the cover file unless user wants to keep it
         if cover_path and os.path.exists(cover_path) and not config.keep_cover_file:
             try:
                 os.remove(cover_path)
             except Exception:
                 pass
 
+        # Remove raw file if needed
         if config.delete_raw_files and raw_path != converted_path:
             try:
                 os.remove(raw_path)
@@ -84,6 +88,7 @@ def download_library(library_id: str, quality: str = None):
 
         playlist_paths.append(os.path.basename(converted_path))
 
+    # Write playlist
     m3u_path = os.path.join(lib_folder, "library.m3u8")
     with open(m3u_path, "w", encoding="utf-8") as m3u:
         for filename in playlist_paths:

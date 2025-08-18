@@ -1,9 +1,12 @@
-import json
 import os
+import json
 import requests
 from dataclasses import dataclass, field
 
-CONFIG_PATH = "config.json"
+# === FIX: ALWAYS POINT TO THE CONFIG NEXT TO THIS FILE =========
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CONFIG_PATH = os.path.join(BASE_DIR, "config.json")
+# ==============================================================
 
 @dataclass
 class Config:
@@ -18,13 +21,16 @@ class Config:
     test_mode: bool = False
     delete_raw_files: bool = True
     keep_cover_file: bool = False
+    get_lyrics: bool = True 
 
     debug: bool = field(default=False, init=False)
     show_progress: bool = field(default=True, init=False)
 
     def __post_init__(self):
-        self._load_config()
-        self._auto_login_if_needed()
+        if os.path.exists(CONFIG_PATH):
+            self._load_config()
+    debug: bool = field(default=False, init=False)
+    show_progress: bool = field(default=True, init=False)
 
     def _load_config(self):
         try:
@@ -44,6 +50,7 @@ class Config:
         self.test_mode = data.get("test_mode", self.test_mode)
         self.delete_raw_files = data.get("delete_raw_files", self.delete_raw_files)
         self.keep_cover_file = data.get("keep_cover_file", self.keep_cover_file)
+        self.get_lyrics = data.get("get_lyrics", self.get_lyrics)
         self.debug = data.get("debug", self.debug)
         self.show_progress = data.get("show_progress", self.show_progress)
 
@@ -55,14 +62,17 @@ class Config:
         except Exception:
             data = {}
 
-        data["token"] = token
-        data["email"] = self.email
-        data["password"] = self.password
-        data["stream_quality"] = self.stream_quality
-        data["stream_player"] = self.stream_player
-        data["output_format"] = self.output_format
-        data["output_directory"] = self.output_directory
-        data["keep_cover_file"] = self.keep_cover_file
+        data.update({
+            "token": token,
+            "email": self.email,
+            "password": self.password,
+            "stream_quality": self.stream_quality,
+            "stream_player": self.stream_player,
+            "output_format": self.output_format,
+            "output_directory": self.output_directory,
+            "keep_cover_file": self.keep_cover_file,
+           "get_lyrics": self.get_lyrics  # save
+        })
 
         with open(CONFIG_PATH, "w") as f:
             json.dump(data, f, indent=4)
