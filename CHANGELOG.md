@@ -36,3 +36,16 @@ All notable changes to this project will be documented here.
 
 
 ---
+## [2.1.0] - 2025-08-23
+
+### Changed
+- **Universal Controls**: Replaced Unix-only signal handling with a cross-platform keyboard listener.
+- **Pause/Resume & Stop**: Downloads can now be paused/resumed with **`p`** and stopped with **`q`** on all platforms.
+- **Progress Refresh**: Progress bar refreshes correctly when resuming a paused download.
+
+### Fixed
+- **Windows Compatibility**: Removed reliance on `SIGTSTP` and `signal.pause` which caused crashes on Windows.
+- **Cross-Platform Behavior**: Unified the control scheme for Linux, macOS, and Windows.
+
+
+---

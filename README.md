@@ -36,7 +36,7 @@ pip install -r requirements.txt
 ### 3. Run the CLI
 
 ```bash
-python3 dabcli.py
+python dabcli.py
 ```
 
 ---
@@ -46,26 +46,26 @@ python3 dabcli.py
 ### 🔐 Log In / 🔓 Log Out
 
 ```bash
-python3 dabcli.py login you@example.com yourpassword
-python3 dabcli.py logout
+python dabcli.py login you@example.com yourpassword
+python dabcli.py logout
 ```
 
 ### 🔍 Search
 
 ```bash
-python3 dabcli.py search "Michael Jackson"
-python3 dabcli.py search "Michael Jackson" --type album
-python3 dabcli.py search "Michael Jackson" --type artist
+python dabcli.py search "Michael Jackson"
+python dabcli.py search "Michael Jackson" --type album
+python dabcli.py search "Michael Jackson" --type artist
 ```
 
 ### ⬇️ Download
 
 ```bash
-python3 dabcli.py track <track-id>
-python3 dabcli.py album "Requiem"
-python3 dabcli.py album buhzzhfz660ma
-python3 dabcli.py library <library_id>
-python3 dabcli.py discography "Michael Jackson"
+python dabcli.py track <track-id>
+python dabcli.py album "Requiem"
+python dabcli.py album buhzzhfz660ma
+python dabcli.py library <library_id>
+python dabcli.py discography "Michael Jackson"
 ```
 
 > Supports metadata overrides for format, title, artist, album, genre, date, and path.
@@ -73,10 +73,10 @@ python3 dabcli.py discography "Michael Jackson"
 ### ▶️ Stream
 
 ```bash
-python3 dabcli.py play --track-id <id>
-python3 dabcli.py play --album-id <id>
-python3 dabcli.py play --library-id <id>
-python3 dabcli.py play --queue <id1> <id2> <id3>
+python dabcli.py play --track-id <id>
+python dabcli.py play --album-id <id>
+python dabcli.py play --library-id <id>
+python dabcli.py play --queue <id1> <id2> <id3>
 ```
 
 ---
