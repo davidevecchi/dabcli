@@ -139,6 +139,7 @@ def download_track(
     
     _start_controls()  # launch keyboard thread
     
+    completed = False
     try:
         with requests.get(stream_url, stream=True, timeout=30) as r:
             r.raise_for_status()
@@ -167,17 +168,19 @@ def download_track(
                         pbar.update(len(chunk))
             
             tqdm.write("[Downloader] ✅ Download completed.")
-            return filepath
+            completed = True
     
     except requests.RequestException as e:
         tqdm.write(f"[Downloader] ❌ Download failed: {e}")
     except OSError as e:
         tqdm.write(f"[Downloader] ❌ File write error: {e}")
     except KeyboardInterrupt as e:
-        tqdm.write(f"[Downloader] ❌ Download stopped by user")
+        tqdm.write(f"[Downloader] ❌ Session stopped by user")
         os.remove(filepath)
         exit(0)
     finally:
-        os.remove(filepath)
         tqdm.write("")
+        if completed:
+            return filepath
+        os.remove(filepath)
         return None
