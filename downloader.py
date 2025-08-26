@@ -151,7 +151,7 @@ def download_track(
                 desc="Downloading",
                 ncols=70,
                 disable=not getattr(config, "show_progress", True),
-                position=1,
+                position=0,
             ) as pbar:
                 _CURRENT_PBAR = pbar
                 for chunk in r.iter_content(chunk_size=8192):

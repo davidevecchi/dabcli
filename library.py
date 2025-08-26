@@ -39,7 +39,7 @@ def download_library(library_id: str, quality: str = None, cli_args=None):
     print(f"[Library] Downloading: {title} ({len(tracks)} tracks)")
     
     playlist_paths = []
-    pbar = tqdm(tracks, position=0, dynamic_ncols=True)
+    pbar = tqdm(tracks, position=1, dynamic_ncols=True)
     for idx, track in enumerate(pbar, 1):
         print(f"[{idx}/{len(tracks)}] {track['title']} — {track['artist']}")
         raw_path = download_track(
