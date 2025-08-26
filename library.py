@@ -41,7 +41,7 @@ def download_library(library_id: str, quality: str = None, cli_args=None):
     playlist_paths = []
     pbar = tqdm(tracks, position=1, dynamic_ncols=True)
     for idx, track in enumerate(pbar, 1):
-        tqdm.write(f"[{idx}/{len(tracks)}] {track['title']} — {track['artist']}")
+        tqdm.write(f"[{idx}/{len(tracks)}] {track['artist']} — {track['title']}")
         raw_path = download_track(
             track_id=track["id"],
             quality=quality,
@@ -94,7 +94,6 @@ def download_library(library_id: str, quality: str = None, cli_args=None):
                 tqdm.write(f"[Library] Could not delete raw file: {e}")
         
         playlist_paths.append(os.path.basename(converted_path))
-        print()
         pbar.update(1)   # no need to touch ncols yourself
     
     # Write playlist

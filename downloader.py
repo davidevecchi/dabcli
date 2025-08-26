@@ -170,13 +170,13 @@ def download_track(
     
     except requests.RequestException as e:
         tqdm.write(f"[Downloader] ❌ Download failed: {e}")
-        os.remove(filepath)
-        return None
     except OSError as e:
         tqdm.write(f"[Downloader] ❌ File write error: {e}")
-        os.remove(filepath)
-        return None
     except KeyboardInterrupt as e:
         tqdm.write(f"[Downloader] ❌ Download stopped by user")
         os.remove(filepath)
         exit(0)
+    finally:
+        os.remove(filepath)
+        tqdm.write("")
+        return None
