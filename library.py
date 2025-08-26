@@ -6,6 +6,8 @@ from cover import download_cover_image
 from downloader import download_track
 from tagger import tag_audio
 from utils import require_login
+from tqdm import tqdm
+import shutil
 
 
 def sanitize_filename(name):
@@ -37,9 +39,9 @@ def download_library(library_id: str, quality: str = None, cli_args=None):
     print(f"[Library] Downloading: {title} ({len(tracks)} tracks)")
     
     playlist_paths = []
-    for idx, track in enumerate(tracks, 1):
+    pbar = tqdm(tracks, position=0, dynamic_ncols=True)
+    for idx, track in enumerate(pbar, 1):
         print(f"[{idx}/{len(tracks)}] {track['title']} — {track['artist']}")
-        
         raw_path = download_track(
             track_id=track["id"],
             quality=quality,
@@ -92,6 +94,7 @@ def download_library(library_id: str, quality: str = None, cli_args=None):
                 print(f"[Library] Could not delete raw file: {e}")
         
         playlist_paths.append(os.path.basename(converted_path))
+        pbar.update(1)   # no need to touch ncols yourself
     
     # Write playlist
     # m3u_path = os.path.join(lib_folder, "library.m3u8")

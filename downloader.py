@@ -156,6 +156,7 @@ def download_track(
                 for chunk in r.iter_content(chunk_size=8192):
                     if _STOPPED:
                         tqdm.write("[Downloader] Download stopped before completion.")
+                        os.remove(filepath)
                         _CURRENT_PBAR = None
                         return None
                     _wait_if_paused()
@@ -168,7 +169,9 @@ def download_track(
     
     except requests.RequestException as e:
         tqdm.write(f"[Downloader] Download failed: {e}")
+        os.remove(filepath)
         return None
     except OSError as e:
         tqdm.write(f"[Downloader] File write error: {e}")
+        os.remove(filepath)
         return None
