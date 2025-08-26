@@ -150,6 +150,7 @@ def download_track(
                 unit_divisor=1024,
                 desc="Downloading",
                 ncols=70,
+                leave=False,
                 disable=not getattr(config, "show_progress", True),
                 position=0,
             ) as pbar:
