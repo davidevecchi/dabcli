@@ -63,6 +63,9 @@ def _start_controls():
     t.start()
 
 
+_start_controls()  # launch keyboard thread
+
+
 def _wait_if_paused():
     global _PAUSED, _STOPPED
     while _PAUSED and not _STOPPED:
@@ -136,8 +139,6 @@ def download_track(
     
     tqdm.write(f"[Downloader] Downloading: {filepath}")
     tqdm.write("[Controls] Press 'p' = Pause/Resume | 'q' = Stop")
-    
-    _start_controls()  # launch keyboard thread
     
     completed = False
     try:
