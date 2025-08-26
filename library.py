@@ -13,7 +13,7 @@ def download_library(library_id: str, quality: str = None, cli_args=None):
     if not require_login(config):
         return
 
-    result = get(f"/libraries/{library_id}")
+    result = get(f"/libraries/{library_id}?limit=5000&page=1")
     if not result or "library" not in result:
         print("[Library] Failed to load library.")
         return
@@ -43,6 +43,8 @@ def download_library(library_id: str, quality: str = None, cli_args=None):
             directory=lib_folder,
             track_meta=track
         )
+        if raw_path == -1:
+            continue
         if not raw_path:
             print("[Library] Skipping: download failed.")
             continue

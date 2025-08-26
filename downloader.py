@@ -1,14 +1,14 @@
-# downloader.py
-
 import os
 import sys
-import time
 import threading
+import time
 import unicodedata
+
 import requests
 from tqdm import tqdm
-from config import config
+
 from api import get
+from config import config
 from utils import require_login
 
 # --- State flags ---
@@ -21,7 +21,7 @@ _CURRENT_PBAR = None
 def _keypress_listener():
     """Thread: watches keyboard input for pause/resume/stop."""
     global _PAUSED, _STOPPED
-
+    
     if os.name == "nt":  # Windows
         import msvcrt
         while not _STOPPED:
@@ -75,11 +75,15 @@ def _sanitize_filename(name: str) -> str:
     return "".join(c for c in name if c.isalnum() or c in " -_()[]{}.,").strip() or "untitled"
 
 
-def _format_filename(track: dict, output_format: str, index: int = None) -> str:
-    title = _sanitize_filename(track.get("title") or "untitled")
+def _format_filename(track: dict, track_id: str, output_format: str, index: int = None) -> str:
+    filename = ' - '.join([
+        track.get("artist", "unknown"),
+        track.get("title", "untitled"),
+        track_id,
+    ])
     if index is not None:
-        return f"{index:02d} - {title}.{output_format}"
-    return f"{title}.{output_format}"
+        return f"{index:02d} - {filename}.{output_format}"
+    return f"{filename}.{output_format}"
 
 
 def get_stream_url(track_id: str, quality: str = "27"):
@@ -93,45 +97,43 @@ def get_stream_url(track_id: str, quality: str = "27"):
 
 # --- Main download ---
 def download_track(track_id: str, filename: str = None, quality: str = None,
-                   directory: str = None, index: int = None, track_meta: dict = None):
+    directory: str = None, index: int = None, track_meta: dict = None):
     global _CURRENT_PBAR, _PAUSED, _STOPPED
     _PAUSED = False
     _STOPPED = False
     _CURRENT_PBAR = None
-
+    
     if not require_login(config):
         return None
-
+    
     quality = quality or ("27" if config.output_format == "flac" else "5")
     directory = directory or config.output_directory
     os.makedirs(directory, exist_ok=True)
-
-    if not filename and track_meta:
-        filename = _format_filename(track_meta, config.output_format, index)
-
+    
+    filename = _format_filename(track_meta, track_id, config.output_format, index)
     filename = _sanitize_filename(filename)
     filepath = os.path.join(directory, filename)
-
+    
     # Skip any existing file
     if os.path.exists(filepath):
         tqdm.write(f"[Downloader] Skipped (exists): {filepath}")
-        return filepath
-
+        return -1
+    
     if config.test_mode:
         tqdm.write(f"[TEST MODE] Would download track {track_id} → {filepath}")
         with open(filepath, "wb") as f:
             f.write(b"PHANTOM DATA")
         return filepath
-
+    
     stream_url = get_stream_url(track_id, quality)
     if not stream_url:
         return None
-
+    
     tqdm.write(f"[Downloader] Downloading: {filepath}")
     tqdm.write("[Controls] Press 'p' = Pause/Resume | 'q' = Stop")
-
+    
     _start_controls()  # launch keyboard thread
-
+    
     try:
         with requests.get(stream_url, stream=True, timeout=30) as r:
             r.raise_for_status()
@@ -143,7 +145,7 @@ def download_track(track_id: str, filename: str = None, quality: str = None,
                 unit_divisor=1024,
                 desc="Downloading",
                 ncols=70,
-                disable=not getattr(config, "show_progress", True)
+                disable=not getattr(config, "show_progress", True),
             ) as pbar:
                 _CURRENT_PBAR = pbar
                 for chunk in r.iter_content(chunk_size=8192):
@@ -155,10 +157,10 @@ def download_track(track_id: str, filename: str = None, quality: str = None,
                     if chunk:
                         f.write(chunk)
                         pbar.update(len(chunk))
-
+            
             tqdm.write("[Downloader] Download completed.")
             return filepath
-
+    
     except requests.RequestException as e:
         tqdm.write(f"[Downloader] Download failed: {e}")
         return None
