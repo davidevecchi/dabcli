@@ -101,7 +101,7 @@ def download_track(
     quality: str = None,
     directory: str = None,
     index: int = None,
-    track_meta: dict = None
+    track_meta: dict = None,
 ):
     global _CURRENT_PBAR, _PAUSED, _STOPPED
     _PAUSED = False
