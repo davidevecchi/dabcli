@@ -179,4 +179,4 @@ def download_track(
     except KeyboardInterrupt as e:
         tqdm.write(f"[Downloader] ❌ Download stopped by user")
         os.remove(filepath)
-        return None
+        exit(0)
