@@ -18,7 +18,7 @@ def download_library(library_id: str, quality: str = None, cli_args=None):
     if not require_login(config):
         return
     
-    result = get(f"/libraries/{library_id}?limit=5000&page=1")
+    result = get(f"/libraries/{library_id}?limit=9999&page=1")
     if not result or "library" not in result:
         print("[Library] Failed to load library.")
         return
@@ -36,12 +36,12 @@ def download_library(library_id: str, quality: str = None, cli_args=None):
     lib_folder = os.path.join(config.output_directory, f"{title} [{output_format.upper()}]")
     os.makedirs(lib_folder, exist_ok=True)
     
-    print(f"[Library] Downloading: {title} ({len(tracks)} tracks)")
+    tqdm.write(f"[Library] Downloading: {title} ({len(tracks)} tracks)")
     
     playlist_paths = []
     pbar = tqdm(tracks, position=1, dynamic_ncols=True)
     for idx, track in enumerate(pbar, 1):
-        print(f"[{idx}/{len(tracks)}] {track['title']} — {track['artist']}")
+        tqdm.write(f"[{idx}/{len(tracks)}] {track['title']} — {track['artist']}")
         raw_path = download_track(
             track_id=track["id"],
             quality=quality,
@@ -51,7 +51,7 @@ def download_library(library_id: str, quality: str = None, cli_args=None):
         if raw_path == -1:
             continue
         if not raw_path:
-            print("[Library] Skipping: download failed.")
+            tqdm.write("[Library] Skipping: download failed.")
             continue
         
         converted_path = raw_path  # same format assumption
@@ -91,7 +91,7 @@ def download_library(library_id: str, quality: str = None, cli_args=None):
             try:
                 os.remove(raw_path)
             except Exception as e:
-                print(f"[Library] Could not delete raw file: {e}")
+                tqdm.write(f"[Library] Could not delete raw file: {e}")
         
         playlist_paths.append(os.path.basename(converted_path))
         pbar.update(1)   # no need to touch ncols yourself
