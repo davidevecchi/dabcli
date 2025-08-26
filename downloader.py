@@ -75,11 +75,11 @@ def _sanitize_filename(name: str) -> str:
     return "".join(c for c in name if c.isalnum() or c in " -_()[]{}.,").strip() or "untitled"
 
 
-def _format_filename(track: dict, track_id: str, output_format: str, index: int = None) -> str:
+def _format_filename(track: dict, track_id: int, output_format: str, index: int = None) -> str:
     filename = ' - '.join([
         track.get("artist", "unknown"),
         track.get("title", "untitled"),
-        track_id,
+        str(track_id),
     ])
     if index is not None:
         return f"{index:02d} - {filename}.{output_format}"
@@ -96,8 +96,13 @@ def get_stream_url(track_id: str, quality: str = "27"):
 
 
 # --- Main download ---
-def download_track(track_id: str, filename: str = None, quality: str = None,
-    directory: str = None, index: int = None, track_meta: dict = None):
+def download_track(
+    track_id: str,
+    quality: str = None,
+    directory: str = None,
+    index: int = None,
+    track_meta: dict = None
+):
     global _CURRENT_PBAR, _PAUSED, _STOPPED
     _PAUSED = False
     _STOPPED = False
