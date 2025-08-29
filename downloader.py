@@ -81,8 +81,8 @@ def _sanitize_filename(name: str) -> str:
 
 def _format_filename(track: dict, track_id: int, output_format: str, index: int = None) -> str:
     filename = ' - '.join([
-        track.get("artist", "unknown")[:100],
-        track.get("title", "untitled")[:100],
+        track.get("artist", "unknown")[:64],
+        track.get("title", "untitled")[:64],
         str(track_id),
     ])
     if index is not None:
