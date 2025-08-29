@@ -108,6 +108,7 @@ def download_album(album_id: str, cli_args=None, directory=None, discography_art
     try:
         if count == 0:
             shutil.rmtree(album_folder)
+            print(f"Deleting empty {album_folder}")
         elif not config.keep_cover_file:
             os.remove(os.path.join(album_folder, "cover.jpg"))
     except Exception:
