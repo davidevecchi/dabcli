@@ -127,16 +127,16 @@ def download_track(
     if os.path.exists(filepath):
         tqdm.write(f"[Downloader] ⏭️ Skipped (exists): {filepath}\n")
         return -1
-
+    
     suffix = f" - {track_id}.{config.output_format}"
     pattern = os.path.join(config.output_directory, "**", f"*{suffix}")
     matches = glob.glob(pattern, recursive=True)
-
+    
     for src_path in matches:
         # Only real files, skip links
         if not os.path.isfile(src_path) or os.path.islink(src_path):
             continue
-
+        
         try:
             os.link(src_path, filepath)
             tqdm.write(f"[Downloader] 🔗 Linked existing file → {filepath}\n"
@@ -151,8 +151,6 @@ def download_track(
             except OSError as e2:
                 tqdm.write(f"[Downloader] ❌ Failed to create link to existing file: {e2}")
                 break
-    
-    return -1
     
     if config.test_mode:
         tqdm.write(f"[TEST MODE] Would download track {track_id} → {filepath}")
