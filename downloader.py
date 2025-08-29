@@ -125,7 +125,7 @@ def download_track(
     
     # Skip any existing file
     if os.path.exists(filepath):
-        tqdm.write(f"[Downloader] ⏭️ Skipped (exists): {filepath}")
+        tqdm.write(f"[Downloader] ⏭️ Skipped (exists): {filepath}\n")
         return -1
 
     suffix = f" - {track_id}.{config.output_format}"
@@ -139,12 +139,14 @@ def download_track(
 
         try:
             os.link(src_path, filepath)
-            tqdm.write(f"[Downloader] 🔗 Linked existing file → {filepath} (hardlink from {src_path})")
+            tqdm.write(f"[Downloader] 🔗 Linked existing file → {filepath}\n"
+                       f"             (hardlink from {src_path})\n")
             return -1
         except OSError:
             try:
                 os.symlink(src_path, filepath)
-                tqdm.write(f"[Downloader] ↗️ Linked existing file → {filepath} (symlink to {src_path})")
+                tqdm.write(f"[Downloader] ↗️ Linked existing file → {filepath}\n"
+                           f"             (symlink to {src_path})\n")
                 return -1
             except OSError as e2:
                 tqdm.write(f"[Downloader] ❌ Failed to create link to existing file: {e2}")
@@ -161,7 +163,7 @@ def download_track(
         return None
     
     tqdm.write(f"[Downloader] Downloading: {filepath}")
-    tqdm.write("[Controls] Press 'p' = Pause/Resume | 'q' = Stop")
+    # tqdm.write("[Controls] Press 'p' = Pause/Resume | 'q' = Stop")
     
     completed = False
     try:
