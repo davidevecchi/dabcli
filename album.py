@@ -17,7 +17,7 @@ def find_album_by_title(title: str):
 
     return results.get("albums", [])
 
-def download_album(album_id: str, cli_args=None):
+def download_album(album_id: str, cli_args=None, directory=None):
     """
     Download an album by ID.
     cli_args: optional object containing --title, --artist, --album, --genre, --date
@@ -37,11 +37,13 @@ def download_album(album_id: str, cli_args=None):
         print("Album has no tracks or failed to load.")
         return
 
-    title = album.get("title", f"album_{album_id}")
+    title = album.get("title", f"album_{album_id}")[:64]
+    artist = album.get("artist", f"album_{album_id}")[:64]
     output_format = config.output_format
     quality = "5" if output_format == "mp3" else "27"
-
-    album_folder = os.path.join(config.output_directory, f"{title} [{output_format.upper()}]")
+    
+    output_directory = directory or os.path.join(config.output_directory, "albums")
+    album_folder = os.path.join(output_directory, f"{artist} - {title}")
     os.makedirs(album_folder, exist_ok=True)
 
     print(f"Downloading Album: {title} ({len(tracks)} tracks)")

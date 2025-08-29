@@ -1,5 +1,7 @@
-# artist.py    
-from api import get    
+# artist.py
+import os
+
+from api import get
 from config import config    
 from utils import require_login    
 from album import download_album    
@@ -131,7 +133,8 @@ def download_discography(
         return
 
     albums = data["albums"]
-    print(f"[Discography] Starting download for {len(albums)} albums by {data['artist']['name']}...\n")
+    artist = data['artist']['name']
+    print(f"[Discography] Starting download for {len(albums)} albums by {artist}...\n")
 
     completed = 0
     failed = 0
@@ -139,7 +142,8 @@ def download_discography(
         print(f"\n[Discography] ({idx}/{len(albums)}) {alb['title']} — {alb.get('releaseDate', '')[:4]}")
         try:
             # Pass cli_args to download_album so metadata overrides are applied
-            download_album(alb["id"], cli_args=cli_args)
+            directory= os.path.join(config.output_directory, "discographies", artist)
+            download_album(alb["id"], cli_args=cli_args, directory=directory)
             completed += 1
         except KeyboardInterrupt:
             print("\n[Discography] Interrupted by user.")
