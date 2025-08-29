@@ -47,11 +47,7 @@ def download_album(album_id: str, cli_args=None, directory=None):
     quality = "5" if output_format == "mp3" else "27"
     
     output_directory = directory or os.path.join(config.output_directory, "albums")
-    album_folder = os.path.join(output_directory, f"{artist} - {title}")
-    if os.path.exists(album_folder):
-        shutil.move(album_folder, os.path.join(output_directory, f"{year} - {artist} - {title}"))
-    return
-    
+    album_folder = os.path.join(output_directory, f"{year} - {artist} - {title}")
     os.makedirs(album_folder, exist_ok=True)
 
     print(f"Downloading Album: {title} ({len(tracks)} tracks)")
