@@ -104,12 +104,10 @@ def download_album(album_id: str, cli_args=None, directory=None, discography_art
                 except Exception:
                     pass
     
-    if count == 0:
-        os.remove(album_folder)
-    
-    # Optionally clean cover.jpg after embedding
-    if not config.keep_cover_file:
-        try:
+    try:
+        if count == 0:
+            os.rmdir(album_folder)
+        elif not config.keep_cover_file:
             os.remove(os.path.join(album_folder, "cover.jpg"))
-        except Exception:
-            pass
+    except Exception:
+        pass
