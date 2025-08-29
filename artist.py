@@ -135,7 +135,9 @@ def download_discography(
     albums = data["albums"]
     artist = data['artist']['name']
     print(f"[Discography] Starting download for {len(albums)} albums by {artist}...\n")
-
+    
+    print(cli_args)
+    
     completed = 0
     failed = 0
     for idx, alb in enumerate(albums, 1):
