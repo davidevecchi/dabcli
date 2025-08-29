@@ -142,7 +142,7 @@ def download_discography(
         print(f"\n[Discography] ({idx}/{len(albums)}) {alb['title']} — {alb.get('releaseDate', '')[:4]}")
         try:
             # Pass cli_args to download_album so metadata overrides are applied
-            directory= os.path.join(config.output_directory, "discographies", artist)
+            directory= os.path.join(config.output_directory, "discographies", f"{artist} - {artist_id}")
             download_album(alb["id"], cli_args=cli_args, directory=directory, discography_artist=artist)
             completed += 1
         except KeyboardInterrupt:
