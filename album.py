@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from api import get
 from config import config
@@ -106,7 +107,7 @@ def download_album(album_id: str, cli_args=None, directory=None, discography_art
     
     try:
         if count == 0:
-            os.rmdir(album_folder)
+            shutil.rmtree(album_folder)
         elif not config.keep_cover_file:
             os.remove(os.path.join(album_folder, "cover.jpg"))
     except Exception:
