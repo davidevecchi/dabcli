@@ -79,11 +79,11 @@ def _sanitize_filename(name: str) -> str:
     return "".join(c for c in name if c.isalnum() or c in " -_()[]{}.,").strip() or "untitled"
 
 
-def _format_filename(track: dict, track_id: int, output_format: str, index: int = None) -> str:
+def _format_filename(track: dict, track_id: str, output_format: str, index: int = None) -> str:
     filename = ' - '.join([
         track.get("artist", "unknown")[:64],
         track.get("title", "untitled")[:64],
-        str(track_id),
+        track_id,
     ])
     if index is not None:
         return f"{index:02d} - {filename}.{output_format}"
@@ -120,7 +120,7 @@ def download_track(
     directory = directory or config.output_directory
     os.makedirs(directory, exist_ok=True)
     
-    filename = _format_filename(track_meta, track_id, config.output_format, index)
+    filename = _format_filename(track_meta, str(track_id), config.output_format, index)
     filename = _sanitize_filename(filename)
     filepath = os.path.join(directory, filename)
     
