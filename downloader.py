@@ -129,7 +129,7 @@ def download_track(
         return -1
 
     suffix = f" - {track_id}.{config.output_format}"
-    pattern = os.path.join(config.directory, "**", f"*{suffix}")
+    pattern = os.path.join(config.output_directory, "**", f"*{suffix}")
     matches = glob.glob(pattern, recursive=True)
 
     for src_path in matches:
