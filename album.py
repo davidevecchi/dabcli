@@ -19,7 +19,7 @@ def find_album_by_title(title: str):
 
     return results.get("albums", [])
 
-def download_album(album_id: str, cli_args=None, directory=None, artist=None):
+def download_album(album_id: str, cli_args=None, directory=None, discography_artist=None):
     """
     Download an album by ID.
     cli_args: optional object containing --title, --artist, --album, --genre, --date
@@ -59,7 +59,9 @@ def download_album(album_id: str, cli_args=None, directory=None, artist=None):
         album_cover_path = download_cover_image(cover_url, os.path.join(album_folder, "cover.jpg"))
 
     for idx, track in enumerate(tracks, 1):
-        if artist in track['title'] or artist in track['artist']:
+        if discography_artist and (discography_artist in track['title'] or
+                                   discography_artist in track['artist'] or
+                                   discography_artist in title):
             print(f"[{idx}/{len(tracks)}] {track['title']} — {track['artist']}")
     
             raw_path = download_track(

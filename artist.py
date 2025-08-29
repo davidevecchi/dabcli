@@ -143,7 +143,7 @@ def download_discography(
         try:
             # Pass cli_args to download_album so metadata overrides are applied
             directory= os.path.join(config.output_directory, "discographies", artist)
-            download_album(alb["id"], cli_args=cli_args, directory=directory)
+            download_album(alb["id"], cli_args=cli_args, directory=directory, discography_artist=artist)
             completed += 1
         except KeyboardInterrupt:
             print("\n[Discography] Interrupted by user.")
