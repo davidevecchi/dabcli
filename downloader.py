@@ -116,7 +116,7 @@ def download_track(
         return None
     
     quality = quality or ("27" if config.output_format == "flac" else "5")
-    print(quality)
+    
     directory = directory or config.output_directory
     os.makedirs(directory, exist_ok=True)
     

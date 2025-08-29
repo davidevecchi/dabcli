@@ -30,10 +30,9 @@ def download_library(library_id: str, quality: str = None, cli_args=None):
         return
     
     title = sanitize_filename(library.get("name", f"library_{library_id}"))
-    output_format = config.output_format
-    quality = quality or ("27" if output_format == "flac" else "5")
+    quality = "27" if config.output_format == "flac" else "5"
     
-    lib_folder = os.path.join(config.output_directory, "libraries", f"{title} [{output_format.upper()}]")
+    lib_folder = os.path.join(config.output_directory, "libraries", title)
     os.makedirs(lib_folder, exist_ok=True)
     
     tqdm.write(f"[Library] Downloading: {title} ({len(tracks)} tracks)")

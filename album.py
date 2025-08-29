@@ -1,3 +1,5 @@
+import shutil
+
 from api import get
 from config import config
 from utils import require_login
@@ -39,11 +41,17 @@ def download_album(album_id: str, cli_args=None, directory=None):
 
     title = album.get("title", f"album_{album_id}")[:64]
     artist = album.get("artist", f"album_{album_id}")[:64]
+    year = album.get("releaseDate", "")[:4]
+    
     output_format = cli_args.format or config.output_format
     quality = "5" if output_format == "mp3" else "27"
     
     output_directory = directory or os.path.join(config.output_directory, "albums")
     album_folder = os.path.join(output_directory, f"{artist} - {title}")
+    if os.path.exists(album_folder):
+        shutil.move(album_folder, os.path.join(output_directory, f"{year} - {artist} - {title}"))
+    return
+    
     os.makedirs(album_folder, exist_ok=True)
 
     print(f"Downloading Album: {title} ({len(tracks)} tracks)")

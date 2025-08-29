@@ -218,6 +218,8 @@ def main():
 
     # ===== Parse args =====
     args = parser.parse_args()
+    if args.format:
+        config.output_format = args.format  # fixme
 
     # Handle global help
     if args.help and args.command:
