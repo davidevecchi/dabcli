@@ -59,11 +59,16 @@ def download_album(album_id: str, cli_args=None, directory=None, discography_art
     if cover_url:
         album_cover_path = download_cover_image(cover_url, os.path.join(album_folder, "cover.jpg"))
     
+    count = 0
     for idx, track in enumerate(tracks, 1):
-        if discography_artist is None or (discography_artist in track['title'] or
-                                          discography_artist in track['artist'] or
-                                          discography_artist in title):
+        if discography_artist is None or (
+            discography_artist in title or
+            discography_artist in artist or
+            discography_artist in track['title'] or
+            discography_artist in track['artist']
+        ):
             print(f"[{idx}/{len(tracks)}] {track['title']} — {track['artist']}")
+            count += 1
             
             raw_path = download_track(
                 track_id=track["id"],
@@ -98,6 +103,9 @@ def download_album(album_id: str, cli_args=None, directory=None, discography_art
                     os.remove(raw_path)
                 except Exception:
                     pass
+    
+    if count == 0:
+        os.remove(album_folder)
     
     # Optionally clean cover.jpg after embedding
     if not config.keep_cover_file:
