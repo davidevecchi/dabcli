@@ -152,6 +152,8 @@ def download_track(
                 tqdm.write(f"[Downloader] ❌ Failed to create link to existing file: {e2}")
                 break
     
+    return -1
+    
     if config.test_mode:
         tqdm.write(f"[TEST MODE] Would download track {track_id} → {filepath}")
         with open(filepath, "wb") as f:
