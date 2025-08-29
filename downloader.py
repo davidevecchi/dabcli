@@ -1,3 +1,4 @@
+import glob
 import os
 import sys
 import threading
@@ -80,8 +81,8 @@ def _sanitize_filename(name: str) -> str:
 
 def _format_filename(track: dict, track_id: int, output_format: str, index: int = None) -> str:
     filename = ' - '.join([
-        track.get("artist", "unknown"),
-        track.get("title", "untitled"),
+        track.get("artist", "unknown")[:100],
+        track.get("title", "untitled")[:100],
         str(track_id),
     ])
     if index is not None:
@@ -124,8 +125,30 @@ def download_track(
     
     # Skip any existing file
     if os.path.exists(filepath):
-        tqdm.write(f"[Downloader] Skipped (exists): {filepath}")
+        tqdm.write(f"[Downloader] ⏭️ Skipped (exists): {filepath}")
         return -1
+
+    suffix = f" - {track_id}.{config.output_format}"
+    pattern = os.path.join(config.directory, "**", f"*{suffix}")
+    matches = glob.glob(pattern, recursive=True)
+
+    for src_path in matches:
+        # Only real files, skip links
+        if not os.path.isfile(src_path) or os.path.islink(src_path):
+            continue
+
+        try:
+            os.link(src_path, filepath)
+            tqdm.write(f"[Downloader] 🔗 Linked existing file → {filepath} (hardlink from {src_path})")
+            return -1
+        except OSError:
+            try:
+                os.symlink(src_path, filepath)
+                tqdm.write(f"[Downloader] ↗️ Linked existing file → {filepath} (symlink to {src_path})")
+                return -1
+            except OSError as e2:
+                tqdm.write(f"[Downloader] ❌ Failed to create link to existing file: {e2}")
+                break
     
     if config.test_mode:
         tqdm.write(f"[TEST MODE] Would download track {track_id} → {filepath}")
