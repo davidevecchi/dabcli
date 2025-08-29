@@ -169,7 +169,7 @@ def main():
     )
     discog_parser.add_argument("artist", help="Artist name or ID")
     discog_parser.add_argument("--sort-by", choices=["year", "title", "popularity"], default="year", help="Sort albums by this field")
-    discog_parser.add_argument("--sort-order", choices=["asc", "desc"], default="desc", help="Sort order")
+    discog_parser.add_argument("--sort-order", choices=["asc", "desc"], default="asc", help="Sort order")
     discog_parser.add_argument("--view-only", action="store_true", help="Only view albums, do not download")
     discog_parser.add_argument("--limit", type=int, help="Limit number of albums to download")
 

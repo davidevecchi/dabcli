@@ -16,7 +16,7 @@ def _search_artist_by_name(name: str):
         return []    
     return results    
     
-def get_discography(artist_id, sort_by="year", sort_order="desc", fetch_all=False, limit=None):    
+def get_discography(artist_id, sort_by="year", sort_order="asc", fetch_all=False, limit=None):
     """    
     Returns full structure: {"artist": {...}, "albums": [...]}    
     - fetch_all=True will paginate until no more results.    
@@ -82,7 +82,7 @@ def print_discography(data):
 def download_discography(
     artist_query: str,
     sort_by: str = "year",
-    sort_order: str = "desc",
+    sort_order: str = "asc",
     view_only=False,
     limit=None,
     cli_args=None  # <--- add this
