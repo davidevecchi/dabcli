@@ -41,7 +41,6 @@ def download_album(album_id: str, cli_args=None, directory=None):
     artist = album.get("artist", f"album_{album_id}")[:64]
     output_format = cli_args.format or config.output_format
     quality = "5" if output_format == "mp3" else "27"
-    print(quality)
     
     output_directory = directory or os.path.join(config.output_directory, "albums")
     album_folder = os.path.join(output_directory, f"{artist} - {title}")
