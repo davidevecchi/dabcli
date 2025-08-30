@@ -119,12 +119,10 @@ def download_track(
     filepath = os.path.join(directory, filename)
     suffix = f" - {track_id}.{config.output_format}"
     
-    print(track_meta)
-    
     # Skip any existing file
     if os.path.exists(filepath):
         tqdm.write(f"[Downloader] ⏭️ Skipped (exists): {filepath}\n")
-        return filepath
+        return filepath  # fixme -1
     
     pattern = os.path.join(directory, "*{suffix}")
     matches = glob.glob(pattern, recursive=False)
