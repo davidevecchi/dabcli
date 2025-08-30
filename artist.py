@@ -144,6 +144,9 @@ def download_discography(
     
     albums = data["albums"]
     artist = data['artist']['name']
+    if artist == "Unknown Artist":
+        exit(0)
+        
     print(f"[Discography] Starting download for {len(albums)} albums by {artist}...\n")
     
     completed = 0
