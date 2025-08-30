@@ -124,7 +124,7 @@ def download_track(
         tqdm.write(f"[Downloader] ⏭️ Skipped (exists): {filepath}\n")
         return filepath  # fixme -1
     
-    pattern = os.path.join(directory, "*{suffix}")
+    pattern = os.path.join(directory, f"*{suffix}")
     matches = glob.glob(pattern, recursive=False)
     for src_path in matches:
         os.rename(src_path, filepath)
