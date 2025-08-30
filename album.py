@@ -72,8 +72,6 @@ def download_album(album_id: str, cli_args=None, directory=None, discography_art
     
     count = 0
     for idx, track in enumerate(tracks, 1):
-        print(discography_artist)
-        return
         if discography_artist is None or (
             discography_artist in title or
             discography_artist in artist or
