@@ -9,6 +9,7 @@ from tqdm import tqdm
 
 from api import get
 from config import config
+from tagger import tag_audio
 from utils import require_login, sanitize_filename
 
 # --- State flags ---
@@ -121,6 +122,8 @@ def download_track(
     # Skip any existing file
     if os.path.exists(filepath):
         tqdm.write(f"[Downloader] ⏭️ Skipped (exists): {filepath}\n")
+        # update metadata for existing file
+        tag_audio(filepath, track_meta)
         return -1
     
     pattern = os.path.join(directory, "*{suffix}")
