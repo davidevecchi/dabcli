@@ -297,7 +297,7 @@ def main():
 
     elif args.command == "track":
         if not require_login(config): return
-        from downloader import _sanitize_filename
+        from downloader import sanitize_filename
         output_format = args.format or config.output_format
         directory = args.path or config.output_directory
 
@@ -327,7 +327,7 @@ def main():
         cover_url = track_meta_raw.get("albumCover")
         cover_path = None
         if cover_url:
-            clean_title = _sanitize_filename(track_meta["title"] or "cover")
+            clean_title = sanitize_filename(track_meta["title"] or "cover")
             cover_path = download_cover_image(
                 cover_url, os.path.join(directory, f"{clean_title}.jpg")
             )

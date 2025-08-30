@@ -62,11 +62,11 @@ def download_library(library_id: str, quality: str = None, cli_args=None):
         }
         
         # Download a cover file for this track (named via song title)
-        from downloader import _sanitize_filename
+        from downloader import sanitize_filename
         cover_url = track.get("albumCover")
         cover_path = None
         if cover_url:
-            clean_title = _sanitize_filename(track.get("title", "cover"))
+            clean_title = sanitize_filename(track.get("title", "cover"))
             cover_path = download_cover_image(
                 cover_url, os.path.join(lib_folder, f"{clean_title}.jpg"),
             )
