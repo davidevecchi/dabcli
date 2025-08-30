@@ -103,6 +103,7 @@ def download_album(album_id: str, cli_args=None, directory=None, discography_art
                 "album": album.get("title", ""),
                 "genre": album.get("genre", ""),
                 "date": album.get("releaseDate", "")[:4],
+                "albumArtist": album.get("artist", ""),
             }
             
             # Embed cover
