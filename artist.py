@@ -2,7 +2,8 @@
 import os
 
 from api import get
-from config import config    
+from config import config
+from downloader import sanitize_filename
 from utils import require_login    
 from album import download_album    
 from tabulate import tabulate    
@@ -142,7 +143,7 @@ def download_discography(
         print(f"\n[Discography] ({idx}/{len(albums)}) {alb['title']} — {alb.get('releaseDate', '')[:4]}")
         try:
             # Pass cli_args to download_album so metadata overrides are applied
-            directory= os.path.join(config.output_directory, "discographies", f"{artist} - {artist_id}")
+            directory= os.path.join(config.output_directory, "discographies", sanitize_filename(f"{artist} - {artist_id}"))
             download_album(alb["id"], cli_args=cli_args, directory=directory, discography_artist=artist)
             completed += 1
         except KeyboardInterrupt:

@@ -74,9 +74,14 @@ def _wait_if_paused():
 
 
 # --- Filename utilities ---
-def _sanitize_filename(name: str) -> str:
+def sanitize_filename(name: str) -> str:
     name = unicodedata.normalize("NFKC", name)
-    return "".join(c for c in name if c.isalnum() or c in " -_()[]{}.,").strip() or "untitled"
+    name = name.replace("/", "|")
+    name = name.lstrip(".")
+    name = name.strip()
+    if name in {"", ".", ".."}:
+        return "untitled"
+    return name
 
 
 def _format_filename(track: dict, track_id: str, output_format: str, index: int = None) -> str:
@@ -121,7 +126,7 @@ def download_track(
     os.makedirs(directory, exist_ok=True)
     
     filename = _format_filename(track_meta, str(track_id), config.output_format, index)
-    filename = _sanitize_filename(filename)
+    filename = sanitize_filename(filename)
     filepath = os.path.join(directory, filename)
     
     # Skip any existing file
@@ -130,9 +135,16 @@ def download_track(
         return -1
     
     suffix = f" - {track_id}.{config.output_format}"
+    
+    pattern = os.path.join(directory, "*{suffix}")
+    matches = glob.glob(pattern, recursive=False)
+    for src_path in matches:
+        os.rename(src_path, filepath)
+        tqdm.write(f"[Downloader] ✏️ Renamed (exists): {filepath}\n")
+        return -1
+    
     pattern = os.path.join(config.output_directory, "**", f"*{suffix}")
     matches = glob.glob(pattern, recursive=True)
-    
     for src_path in matches:
         # Only real files, skip links
         if not os.path.isfile(src_path) or os.path.islink(src_path):

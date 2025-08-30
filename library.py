@@ -5,13 +5,9 @@ from tqdm import tqdm
 from api import get
 from config import config
 from cover import download_cover_image
-from downloader import download_track
+from downloader import download_track, sanitize_filename
 from tagger import tag_audio
 from utils import require_login
-
-
-def sanitize_filename(name):
-    return ''.join(c for c in name if c.isalnum() or c in ' _-').rstrip()
 
 
 def download_library(library_id: str, quality: str = None, cli_args=None):

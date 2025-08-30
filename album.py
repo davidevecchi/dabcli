@@ -4,7 +4,7 @@ import shutil
 from api import get
 from config import config
 from cover import download_cover_image
-from downloader import download_track
+from downloader import download_track, sanitize_filename
 from tagger import tag_audio
 from utils import require_login
 
@@ -49,7 +49,7 @@ def download_album(album_id: str, cli_args=None, directory=None, discography_art
     quality = "5" if output_format == "mp3" else "27"
     
     output_directory = directory or os.path.join(config.output_directory, "albums")
-    album_folder = os.path.join(output_directory, f"{year} - {artist} - {title} - {album_id}")
+    album_folder = os.path.join(output_directory, sanitize_filename(f"{year} - {artist} - {title} - {album_id}"))
     os.makedirs(album_folder, exist_ok=True)
     
     print(f"Downloading Album: {title} ({len(tracks)} tracks)")
