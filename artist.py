@@ -69,6 +69,11 @@ def get_discography(artist_id, sort_by="year", sort_order="asc", fetch_all=False
 def print_discography(data):
     artist = data.get("artist", {})
     albums = data.get("albums", [])
+    
+    if not artist.get('name', None):
+        print("[Discography] No artist name found.")
+        exit(1)
+    
     print(f"[Discography] {artist.get('name', 'Unknown Artist')} ({artist.get('albumsCount', len(albums))} albums)\n")
     table = [
         [
