@@ -119,10 +119,11 @@ def download_track(
     filepath = os.path.join(directory, filename)
     suffix = f" - {track_id}.{config.output_format}"
     
+    print(track_meta)
+    
     # Skip any existing file
     if os.path.exists(filepath):
         tqdm.write(f"[Downloader] ⏭️ Skipped (exists): {filepath}\n")
-        # update metadata for existing file
         tag_audio(filepath, track_meta)
         return -1
     
@@ -130,6 +131,7 @@ def download_track(
     matches = glob.glob(pattern, recursive=False)
     for src_path in matches:
         os.rename(src_path, filepath)
+        tag_audio(filepath, track_meta)
         tqdm.write(f"[Downloader] ✏️ Renamed (exists): {filepath}\n")
         return -1
     
