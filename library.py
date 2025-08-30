@@ -7,7 +7,7 @@ from config import config
 from cover import download_cover_image
 from downloader import download_track
 from tagger import tag_audio
-from utils import require_login, sanitize_filename
+from utils import require_login
 
 
 def download_library(library_id: str, quality: str = None, cli_args=None):
@@ -25,6 +25,7 @@ def download_library(library_id: str, quality: str = None, cli_args=None):
         print("[Library] No tracks found.")
         return
     
+    from utils import sanitize_filename
     title = sanitize_filename(library.get("name", f"library_{library_id}"))
     quality = "27" if config.output_format == "flac" else "5"
     
