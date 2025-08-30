@@ -297,7 +297,7 @@ def main():
 
     elif args.command == "track":
         if not require_login(config): return
-        from downloader import sanitize_filename
+        from utils import sanitize_filename
         output_format = args.format or config.output_format
         directory = args.path or config.output_directory
 

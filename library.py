@@ -5,9 +5,9 @@ from tqdm import tqdm
 from api import get
 from config import config
 from cover import download_cover_image
-from downloader import download_track, sanitize_filename
+from downloader import download_track
 from tagger import tag_audio
-from utils import require_login
+from utils import require_login, sanitize_filename
 
 
 def download_library(library_id: str, quality: str = None, cli_args=None):
@@ -62,7 +62,7 @@ def download_library(library_id: str, quality: str = None, cli_args=None):
         }
         
         # Download a cover file for this track (named via song title)
-        from downloader import sanitize_filename
+        from utils import sanitize_filename
         cover_url = track.get("albumCover")
         cover_path = None
         if cover_url:

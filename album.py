@@ -4,9 +4,9 @@ import shutil
 from api import get
 from config import config
 from cover import download_cover_image
-from downloader import download_track, sanitize_filename
+from downloader import download_track
 from tagger import tag_audio
-from utils import require_login
+from utils import require_login, sanitize_filename
 
 
 def find_album_by_title(title: str):

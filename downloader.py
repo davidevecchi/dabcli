@@ -3,14 +3,13 @@ import os
 import sys
 import threading
 import time
-import unicodedata
 
 import requests
 from tqdm import tqdm
 
 from api import get
 from config import config
-from utils import require_login
+from utils import require_login, sanitize_filename
 
 # --- State flags ---
 _PAUSED = False
@@ -71,17 +70,6 @@ def _wait_if_paused():
     global _PAUSED, _STOPPED
     while _PAUSED and not _STOPPED:
         time.sleep(0.2)
-
-
-# --- Filename utilities ---
-def sanitize_filename(name: str) -> str:
-    name = unicodedata.normalize("NFKC", name)
-    name = name.replace("/", "|")
-    name = name.lstrip(".")
-    name = name.strip()
-    if name in {"", ".", ".."}:
-        return "untitled"
-    return name
 
 
 def _format_filename(track: dict, track_id: str, output_format: str, index: int = None) -> str:
