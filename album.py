@@ -1,3 +1,4 @@
+import glob
 import os
 import shutil
 
@@ -50,6 +51,15 @@ def download_album(album_id: str, cli_args=None, directory=None, discography_art
     
     output_directory = directory or os.path.join(config.output_directory, "albums")
     album_folder = os.path.join(output_directory, sanitize_filename(f"{year} - {artist} - {title} - {album_id}"))
+    
+    excluded_matches = glob.glob(os.path.join(output_directory, '.excluded', f'*{album_id}'))
+    if len(excluded_matches) > 0:
+        print(f"Album {album_id} is excluded.")
+        for match in excluded_matches:
+            for track in glob.glob(os.path.join(match, "*")):
+                os.remove(track)
+        return
+    
     os.makedirs(album_folder, exist_ok=True)
     
     print(f"Downloading Album: {title} ({len(tracks)} tracks)")
