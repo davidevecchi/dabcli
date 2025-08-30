@@ -98,11 +98,11 @@ def download_album(album_id: str, cli_args=None, directory=None, discography_art
             
             # Build metadata, applying CLI overrides if present
             metadata = {
-                "title": getattr(cli_args, "title", None) or track.get("title", ""),
-                "artist": getattr(cli_args, "artist", None) or track.get("artist", ""),
-                "album": getattr(cli_args, "album", None) or album.get("title", ""),
-                "genre": getattr(cli_args, "genre", None) or album.get("genre", ""),
-                "date": getattr(cli_args, "date", None) or album.get("releaseDate", "")[:4],
+                "title": track.get("title", ""),
+                "artist": track.get("artist", ""),
+                "album": album.get("title", ""),
+                "genre": album.get("genre", ""),
+                "date": album.get("releaseDate", "")[:4],
             }
             
             # Embed cover
