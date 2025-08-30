@@ -122,7 +122,7 @@ def download_track(
     # Skip any existing file
     if os.path.exists(filepath):
         tqdm.write(f"[Downloader] ⏭️ Skipped (exists): {filepath}\n")
-        return filepath  # fixme -1
+        return -1
     
     pattern = os.path.join(directory, f"*{suffix}")
     matches = glob.glob(pattern, recursive=False)
@@ -142,13 +142,13 @@ def download_track(
             os.link(src_path, filepath)
             tqdm.write(f"[Downloader] 🔗 Linked existing file → {filepath}\n"
                        f"             (hardlink from {src_path})\n")
-            return -1
+            return filepath
         except OSError:
             try:
                 os.symlink(src_path, filepath)
                 tqdm.write(f"[Downloader] ↗️ Linked existing file → {filepath}\n"
                            f"             (symlink to {src_path})\n")
-                return -1
+                return filepath
             except OSError as e2:
                 tqdm.write(f"[Downloader] ❌ Failed to create link to existing file: {e2}")
                 break
