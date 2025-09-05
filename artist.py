@@ -167,6 +167,6 @@ def download_discography(
             print(f"[Discography] Failed: {e}")
             failed += 1
     
-    os.mkdir(os.path.join(config.output_directory, "discographies", artist_folder, '.excluded'))
-    
+    os.makedirs(os.path.join(config.output_directory, "discographies", artist_folder, '.excluded'), exist_ok=True)
+
     print(f"\n[Discography] Finished. Completed: {completed} | Failed: {failed}")
