@@ -145,9 +145,11 @@ def download_discography(
     albums = data["albums"]
     artist = data['artist']['name']
     if artist == "Unknown Artist":
+        print("[Discography] No artist name found, exiting.")
         exit(0)
         
-    print(f"[Discography] Starting download for {len(albums)} albums by {artist}...\n")
+    artist_folder = sanitize_filename(f"{artist} - {artist_id}")
+    print(f"[Discography] Starting download for {len(albums)} albums by {artist} ({artist_id})...\n")
     
     completed = 0
     failed = 0
@@ -155,7 +157,7 @@ def download_discography(
         print(f"\n[Discography] ({idx}/{len(albums)}) {alb['title']} — {alb.get('releaseDate', '')[:4]}")
         try:
             # Pass cli_args to download_album so metadata overrides are applied
-            directory = os.path.join(config.output_directory, "discographies", sanitize_filename(f"{artist} - {artist_id}"))
+            directory = os.path.join(config.output_directory, "discographies", artist_folder)
             download_album(alb["id"], cli_args=cli_args, directory=directory, discography_artist=artist)
             completed += 1
         except KeyboardInterrupt:
@@ -164,5 +166,7 @@ def download_discography(
         except Exception as e:
             print(f"[Discography] Failed: {e}")
             failed += 1
+    
+    os.mkdir(os.path.join(config.output_directory, "discographies", artist_folder, '.excluded'))
     
     print(f"\n[Discography] Finished. Completed: {completed} | Failed: {failed}")
